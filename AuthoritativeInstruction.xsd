@@ -1,0 +1,324 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2015 rel. 3 (x64) (http://www.altova.com) by Mia Domigan (Gladstone Ports Corporation) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:t="http://gpcopsschema.azurewebsites.net/schema/2015/1.0/ConsignmentService" targetNamespace="http://gpcopsschema.azurewebsites.net/schema/2015/1.0/ConsignmentService" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:element name="AuthoritativeInstruction">
+    <xs:annotation>
+      <xs:documentation>Customer Supplied and Authorised Consignment Notification</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Header">
+          <xs:annotation>
+            <xs:documentation>Provides information for identifying and routing this document</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CustomerAuthority" type="t:CustomerAuthorityType"/>
+              <xs:element name="Identifier" type="t:AuthorisationIdType">
+                <xs:annotation>
+                  <xs:documentation>Represents the unique unit of work that is the subject of this communication exchange between Customer and GPCL Operational Systems Group.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="MessageTimeStamp" type="xs:dateTime">
+                <xs:annotation>
+                  <xs:documentation>A timestamp in ISO 8601 UTC+10 format when message  sent for the consignment</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Action">
+          <xs:annotation>
+            <xs:documentation>Encapsulates the detail action requested by the customer with regard the specific identiified unit of work, typically actions would be "create", update" , "withdraw" and authoritative instruction regarding the unit of work. Support exists for communicating operational messages and the like associated with this particiular unit of wotk that do alter the "authoritative Instruction" status</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice>
+                <xs:element name="Create">
+                  <xs:annotation>
+                    <xs:documentation>Encapsulates the data required to be provided by the customer when customer is submitting "Authoritative Instruction" to the GPCL regarding the proper handling of the unloading function for this identifed unit of work</xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="Instruction" type="t:CreateType"/>
+                      <xs:element name="CoalMetadata" type="t:CoalMetadataType"/>
+                      <xs:element name="LoadOutDetails" type="t:LoadOutDetailsType"/>
+                      <xs:element name="CreateComment" type="t:CommentType" minOccurs="0">
+                        <xs:annotation>
+                          <xs:documentation>Encapsulates data provided by the customer when the  customer seeks to create "Authoritative Istruction" information regarding the identified unit of work</xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Update">
+                  <xs:annotation>
+                    <xs:documentation>Encapsulates the data required to be provided by the customer when customer is submitting an update to an existing  "Authoritative Instruction" to the GPCL regarding the proper handling of the unloading function for this identifed unit of work</xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="Instruction" type="t:UpdateType" minOccurs="0"/>
+                      <xs:element name="CoalMetadata" type="t:CoalMetadataType"/>
+                      <xs:element name="UpdateComment" type="t:CommentType">
+                        <xs:annotation>
+                          <xs:documentation>Encapsulates data provided by the customer when the  customer seeks to update "Consignment Authorization" information to GPCL Operational Systems personnel regarding the identified unit of work eg: "CoalType" etc.</xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Cancel">
+                  <xs:annotation>
+                    <xs:documentation>Encapsulates the data required to be provided by the customer when customer seeks to cancel or witdraw their "Authoritative Instruction" for the identified unit of work</xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="Instruction" type="t:CancelType" minOccurs="0"/>
+                      <xs:element name="CancellationComment" type="t:CommentType">
+                        <xs:annotation>
+                          <xs:documentation>Encapsulates comment provided by the customer when the  customer seeks to cancel or withdraw "Authoritative Instruction" information regarding the identified unit of work</xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Info">
+                  <xs:annotation>
+                    <xs:documentation>Encapsulates data provided by the customer when the  customer seeks to communicate pertintent information other than "Authorisation" to GPCL Operational Systems personnel regarding the identified unit of work eg: "Please limit water usage as cargo already quite wet"</xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="Message" type="xs:string"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="WagonType">
+    <xs:annotation>
+      <xs:documentation>Type of wagons loaded on the sonsignment</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Sequence" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>A wagon position in the train sequence for the consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Number" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>A wagon unique identifier for the train service</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Type" fixed="Wagon">
+        <xs:annotation>
+          <xs:documentation>A vehicle type fixed as wagon</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="Locomotive"/>
+            <xs:enumeration value="Wagon"/>
+            <xs:enumeration value="Container"/>
+            <xs:enumeration value="Carriage"/>
+            <xs:enumeration value="Nonloadable"/>
+            <xs:enumeration value="Van"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Class" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A vehicle class for the wagon</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AuthorisationIdType">
+    <xs:annotation>
+      <xs:documentation>Complex Type Utilised in Customer Context to Identify the target unit of work for any Authoritative Instruction</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="RailServiceID" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The Rail Providers unique service identifier</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RailServiceDateTime" type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>The Rail Providers unique service date time identifier</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Consignment" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The Rail Providers unique consignment identifier</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="UpdateType">
+    <xs:sequence>
+      <xs:element name="NewFirstWagon" type="t:WagonType">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the new value for first wagon  that customer is seeking to update "Authoritative Instruction" with.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NewLastWagon" type="t:WagonType">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the new value for last wagon  that customer is seeking to update "Authoritative Instruction" with.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NewCount" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the new value for wagon count  that customer is seeking to update "Authoritative Instruction" with.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NewStockpile" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the new value for unloading stockpile location  that customer is seeking to update "Authoritative Instruction" with.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CancelType">
+    <xs:sequence>
+      <xs:element name="FirstWagon" type="t:WagonType">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the first wagon  contained in an existing "Authoritative Instruction" that customer is seeking to cancel or withdraw </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LastWagon" type="t:WagonType">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the last wagon  contained in an existing "Authoritative Instruction" that customer is seeking to cancel or withdraw </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Count" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the wagon count  contained in an existing "Authoritative Instruction" that customer is seeking to cancel or withdraw</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Stockpile" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the identifier for the unloading location of the unit of work that customer is creating Authoritative Instruction for. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CreateType">
+    <xs:sequence>
+      <xs:element name="FirstWagon" type="t:WagonType">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the first wagon  contained within the unit of work that customer is creating Authoritative Instruction for.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LastWagon" type="t:WagonType">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the last wagon  contained within the unit of work that customer is creating Authoritative Instruction for.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Count" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>Encapsulates thecount of wagons within the unit of work that customer is creating Authoritative Instruction for.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Stockpile" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>Encapsulates the identifier for the unloading location of the unit of work that customer is creating Authoritative Instruction for. </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CoalMetadataType">
+    <xs:sequence>
+      <xs:element name="CoalType" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A human readable string representing the type of coal  for the consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CoalProperty">
+        <xs:annotation>
+          <xs:documentation>A human readable string specifying coal property e.g Wet, Dry, Normal etc.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Wet"/>
+            <xs:enumeration value="Sticky"/>
+            <xs:enumeration value="Dry"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Moisture" type="xs:float" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>A float value in percent specifying moisture content for coal loaded</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Ash" type="xs:float" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>A float value in percent specifying ash content for coal loaded</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CustomerAuthorityType">
+    <xs:sequence>
+      <xs:element name="DispatchingMine" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A human readable string representing the mine despatching the consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DispatchingCustomer" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A human readable string  representing the GPC contracted customer responsible for dispatching the consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UnloadLocation">
+        <xs:annotation>
+          <xs:documentation>The human readable string representing the port location for the consignment to be unloaded at.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="GLD"/>
+            <xs:enumeration value="BNY"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="LoadOutDetailsType">
+    <xs:sequence>
+      <xs:element name="LoadLocation" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A human readable string  representing the load location for the consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TonnesLoaded" type="xs:unsignedInt">
+        <xs:annotation>
+          <xs:documentation>An integer value indicating the total tonnes loaded for this consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LoadOutOperator" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>A human readable string representing a person of authority responsible for loading the consignment for the train service</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LoadCompleteDateTime" type="xs:dateTime">
+        <xs:annotation>
+          <xs:documentation>A date timestamp when consignment loading was completed</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UnloadInstruction" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>A human readable string represnting instructions for unloading the consignment</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CommentType">
+    <xs:sequence>
+      <xs:element name="ConsignmentComment" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
